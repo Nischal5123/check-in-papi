@@ -23,5 +23,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</tls:context>
 	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a6b65e6b-e68b-4cb7-9efa-2d91c3cf27f2" flowRef="api-main" />
 	<configuration-properties doc:name="Configuration properties" doc:id="3fbce261-593a-47f9-96ff-f7c69c6c319d" file="properties.yaml" />
+	<global-property doc:name="Global Property" doc:id="18c41c41-c08c-4db6-bbe8-bab20b477d0a" name="env" value="dev" />
 
 </mule>
