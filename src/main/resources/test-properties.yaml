@@ -7,3 +7,7 @@ tls.keystore:
   alias: "server"
   password: "mule12345"
   keyPassword: "mule12345"
+  
+logger:
+    prettyPrint: "true"
+    disabledFields: ""

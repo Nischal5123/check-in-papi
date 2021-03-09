@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <mule 
+xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" 
+xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" 
 xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" 
-xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 xmlns:tls="http://www.mulesoft.org/schema/mule/tls" 
 xmlns="http://www.mulesoft.org/schema/mule/core"
 xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" 
-xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-xmlns:http="http://www.mulesoft.org/schema/mule/http" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" 
 
-xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
 http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
  <http:listener-config name="apiHttpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${api.port}" tlsContext="apiTLSContext" protocol="HTTPS"/>
     </http:listener-config>
     <apikit:config name="apiConfig" api="${api.spec}" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <tls:context name="apiTLSContext" doc:name="TLS Context" doc:id="d0f6446c-a98f-4f8b-936a-9896fbb8b660" >
-		<tls:key-store type="${tls.keystore.type}" path="${tls.keystore.path}" alias="${tls.keystore.alias}" keyPassword="${tls.keystore.keyPassword}" password="${tls.keystore.password}" />
+		<tls:key-store type="${tls.keystore.type}" path="${tls.keystore.path}" alias="${tls.keystore.alias}" keyPassword="${secure::tls.keystore.keyPassword}" password="${secure::tls.keystore.password}" />
 	</tls:context>
 	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a6b65e6b-e68b-4cb7-9efa-2d91c3cf27f2" flowRef="api-main" />
 	
 	<global-property doc:name="Global Property" doc:id="7922e1bf-9f16-4072-878a-de27b5c6887a" name="env" value="dev" />
-	<configuration-properties doc:name="Environment properties" doc:id="73397517-c10b-4a62-88a1-9ebcc4d7b63b" file="${env}-properties.yaml" />
-	<configuration-properties doc:name="General properties" doc:id="3fbce261-593a-47f9-96ff-f7c69c6c319d" file="properties.yaml" />
-	
-	
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f8c9a6cc-67a7-4b83-bfce-30e71a53e854" file="${env}-secure-properties.yaml" key="${encrypt.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Environment properties" doc:id="278bc72b-c8cc-4fba-81ad-50352fb79585" file="${env}-properties.yaml" />
+	<configuration-properties doc:name="General properties" doc:id="3e0912e7-251c-4920-8964-09a7114d7135" file="properties.yaml" />
+	<json-logger:config name="jLogConfig" 
+						doc:name="JSON Logger Config" 	
+						doc:id="98342d31-ae63-46b8-bf83-2aca221a72be" 
+						applicationName="${app.name}" 
+						applicationVersion="${app.version}" 
+						environment="${env}" 
+						prettyPrint="${logger.prettyPrint}"
+						disabledFields = "${logger.disabledFields}"/>
 </mule>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
 	<flow name="payment-approval-by-pnr" doc:id="978f0b89-01ec-4f23-8c72-9a26ec2905de" >
 		<ee:transform>
             <ee:message>
@@ -28,6 +29,15 @@ output application/json
         </ee:transform>
 	</flow>
 	<flow name="check-in-by-pnr" doc:id="79907b02-0039-4201-bae5-cf5b32dad090" >
+		<json-logger:logger doc:name="Logger" doc:id="1063e063-b07e-4f93-ad88-89e725fdf85a" config-ref="jLogConfig" message="Checking-in by PNR">
+			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+   pnr: vars.PNR,
+   payload: payload,
+   attributes: attributes
+    
+}]]]></json-logger:content>
+		</json-logger:logger>
 		<ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -38,5 +48,10 @@ output application/json
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
+		<json-logger:logger doc:name="Logger" doc:id="f310cc88-6a13-46f0-b450-004665a75640" config-ref="jLogConfig" message="Checked-in by PNR" tracePoint="END">
+			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
+{
+}]]]></json-logger:content>
+		</json-logger:logger>
 	</flow>
 </mule>

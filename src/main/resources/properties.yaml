@@ -13,3 +13,7 @@ tls.keystore:
   alias: "server"
   password: "mule12345"
   keyPassword: "mule12345"
+  
+app:
+    name: ${project.artifactId}
+    version: ${project.version}

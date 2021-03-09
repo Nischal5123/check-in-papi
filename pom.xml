@@ -6,7 +6,7 @@
 		<groupId>com.mulesoft.training.anyairline</groupId>
 		<artifactId>solutions-parent-pom</artifactId>
 	    <version>1.0.0-SNAPSHOT</version>
-	    <relativePath>./parent-pom.xml</relativePath>
+	    <relativePath>../parent-pom.xml</relativePath>
 	</parent>
 
 	<artifactId>check-in-papi</artifactId>
@@ -18,6 +18,7 @@
 		<api.groupId>39b1859f-c01f-4ad6-9dc1-c9d9cb75aec4</api.groupId>
 		<api.artifactId>check-in-papi</api.artifactId>
 		<api.version>1.0.0</api.version>
+		<api.layer>${api.layer.papi}</api.layer>
 	</properties>
 
 	<build>
@@ -34,6 +35,16 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+	        <groupId>com.mulesoft.training.anyairline</groupId>
+	        <artifactId>apps-commons</artifactId>
+	        <classifier>mule-plugin</classifier>
+    	</dependency>
+		<dependency>
+				  <groupId>${mssvcs.ap.orgid}</groupId>
+				  <artifactId>json-logger</artifactId>
+				  <classifier>mule-plugin</classifier>
+		</dependency>
 		 <dependency>
 			<groupId>com.mulesoft.modules</groupId>
 			<artifactId>mule-secure-configuration-property-module</artifactId>
