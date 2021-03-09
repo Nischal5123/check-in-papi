@@ -1,9 +1,9 @@
 api: 
-  id: ""
+  id: "16675811"
   
 tls.keystore: 
   type: "pkcs12"
-  path: "check-in-papi.p12"
+  path: "certs/check-in-papi-test.p12"
   alias: "server"
   password: "mule12345"
   keyPassword: "mule12345"
