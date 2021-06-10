@@ -6,6 +6,22 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
 	<flow name="payment-approval-by-pnr" doc:id="978f0b89-01ec-4f23-8c72-9a26ec2905de" >
+		<flow-ref doc:name="update-approvals" doc:id="6f824e65-808a-483e-8883-8cce263ee00e" name="update-approvals"/>
+		<flow-ref doc:name="get-boarding-pass" doc:id="ccfd92b2-b63c-41ba-bb59-fe7ddcef5076" name="get-boarding-pass"/>
+	</flow>
+	<flow name="update-approvals" doc:id="072b89ed-894a-46e1-8f68-dc5ee310ca78" >
+		<ee:transform doc:name="Transform Message" doc:id="f55dd2b9-af8b-456c-9ede-c22d7a74b60d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+   status: "Payment Executed"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="get-boarding-pass" doc:id="60b29aa4-88b9-49fe-9548-0bdfbeb91e83" >
 		<ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -29,6 +45,10 @@ output application/json
         </ee:transform>
 	</flow>
 	<flow name="check-in-by-pnr" doc:id="79907b02-0039-4201-bae5-cf5b32dad090" >
+		<set-variable value="#[payload]" doc:name="checkIn" doc:id="89ac18f9-d1b8-434c-a418-4b07d8ffc7d5" variableName="checkIn"/>
+		<flow-ref name="check-in-flights-management" doc:name="check-in-flights-management"/>
+		<flow-ref name="register-passenger-data" doc:name="register-passenger-data"/>
+		<flow-ref name="create-payment-for-bags" doc:name="create-payment-for-bags"/>
 		<json-logger:logger doc:name="Logger" doc:id="1063e063-b07e-4f93-ad88-89e725fdf85a" config-ref="jLogConfig" message="Checking-in by PNR">
 			<json-logger:content ><![CDATA[#[import modules::JSONLoggerModule output application/json ---
 {
@@ -53,5 +73,19 @@ output application/json
 {
 }]]]></json-logger:content>
 		</json-logger:logger>
+	</flow>
+	<flow name="check-in-flights-management" doc:id="271f8e7e-1aa8-4f18-a7e7-7ce8747dc385" >
+		<logger level="INFO" doc:name="Logger" doc:id="7276d17a-415d-4ef6-a576-4638b8628991" />
+	</flow>
+	<flow name="register-passenger-data" doc:id="f77c5366-57ba-43e2-8a28-de2078eaa397" >
+		<logger level="INFO" doc:name="Logger" doc:id="e1454f37-4c31-4084-83ac-fc4d4d409755" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="178d545b-1813-4168-9c1b-8bf8254bcbcf">
+				<raise-error doc:name="Raise error" doc:id="817343c9-7294-4a48-b0fd-cabe23a2860c" type="APP:CANT_CREATE_PAYMENT"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="create-payment-for-bags" doc:id="cb4755de-4646-4829-a45d-51b41822a9ba" >
+		<logger level="INFO" doc:name="Logger" doc:id="55db44a1-5d9f-4c23-9109-fac55c84edac" />
 	</flow>
 </mule>

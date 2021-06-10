@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="main-suite.xml" />
+	<munit:test name="payment-approval-by-pnr-test" doc:id="60327252-a397-4a3b-9180-61a40e3df9f4" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy get-boarding-pass" doc:id="8be6979b-b787-4880-a538-58089ef803ba" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ccfd92b2-b63c-41ba-bb59-fe7ddcef5076" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="8a75d949-5bcc-4b66-b9e9-82264bb9cadd" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import paymentapprovalbypnrtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="13a88275-77cf-470f-a14b-4cae9725bf3e" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import paymentapprovalbypnrtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="54c4f525-e5f6-4390-9fd3-c015ce043cf3" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://paymentapprovalbypnrtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://paymentapprovalbypnrtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://paymentapprovalbypnrtest\set-event_variable_.dwl')]" />
+					<munit:variable key="PNR" value="#[output application/java --- readUrl('classpath://paymentapprovalbypnrtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to payment-approval-by-pnr" doc:id="4e28478c-ca53-4a31-b486-d73937b51975" name="payment-approval-by-pnr"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="3dc60fab-7bac-4c67-8bf7-417fb82324c2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import paymentapprovalbypnrtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify update-approvals" doc:id="0aaaf0f8-69e9-4d3d-99d6-5b2141b32c03" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6f824e65-808a-483e-8883-8cce263ee00e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify get-boarding-pass" doc:id="5627a189-2d71-4d9f-9c96-0685ff9df012" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ccfd92b2-b63c-41ba-bb59-fe7ddcef5076" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

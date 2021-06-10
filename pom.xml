@@ -19,7 +19,8 @@
 		<api.artifactId>check-in-papi</api.artifactId>
 		<api.version>1.0.0</api.version>
 		<api.layer>${api.layer.papi}</api.layer>
-	</properties>
+		<munit.version>2.3.2</munit.version>
+    </properties>
 
 	<build>
 		<plugins>
@@ -31,7 +32,11 @@
 				<groupId>org.mule.tools.maven</groupId>
 				<artifactId>mule-maven-plugin</artifactId>
 			</plugin>
-		</plugins>
+			<plugin>
+                <groupId>com.mulesoft.munit.tools</groupId>
+                <artifactId>munit-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
 	</build>
 
 	<dependencies>
@@ -71,6 +76,18 @@
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-apikit-module</artifactId>
             <classifier>mule-plugin</classifier>
+        </dependency>
+    	<dependency>
+            <groupId>com.mulesoft.munit</groupId>
+            <artifactId>munit-runner</artifactId>
+            <classifier>mule-plugin</classifier>
+            <scope>test</scope>
+        </dependency>	
+        <dependency>
+            <groupId>com.mulesoft.munit</groupId>
+            <artifactId>munit-tools</artifactId>
+            <classifier>mule-plugin</classifier>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
